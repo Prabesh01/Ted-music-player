@@ -152,7 +152,6 @@ def pl():
                         break                    
     del kk
 
-
 #main stuff happens here
 def ted():
     err_count=0
@@ -168,6 +167,7 @@ def ted():
             try:
                 track=songtracks[0]                            
             except:
+                shuffle=[]
                 pl()
                 try:
                     track=songtracks[0]
