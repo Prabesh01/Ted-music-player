@@ -184,6 +184,7 @@ def ted():
                 pl()
             err_count=0
         except Exception as e:
+            songtracks.pop(0)
             # keep trying till it get 6 continuous exceptions. then exit
             if err_count>6:
                 messagebox.showerror('Dang it!', str(e), parent=gui)
