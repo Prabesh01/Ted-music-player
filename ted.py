@@ -1,58 +1,33 @@
-import sys
+#for accessing files and for exiting on errors
 import os
+import sys
+
+#for gui window, error windows
 from tkinter import Tk, messagebox
-import shutil
-import psutil
+
+#for path related stuffs
 from pathlib import Path
+
+#for copying files
+import shutil
+
+#to see running process and not run if one instance of ted player is already running
+import psutil
+
+#for shuffling songs
 import random
 
-# importing * from moviepy.editor gives error when using pyinstaller 
-# as per https://github.com/Zulko/moviepy/issues/591
-# have to import everything manually
+# players
+from pygame import mixer # for audio files cuz cant pause resume audio files in ffpyplayer
+mixer.init()
+from ffpyplayer.player import MediaPlayer # for video files cuz pygame doesn't play them
 
-from moviepy.video.io.VideoFileClip import VideoFileClip
-from moviepy.video.VideoClip import ImageClip
-from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
-from moviepy.audio.io.AudioFileClip import AudioFileClip
-from moviepy.audio.AudioClip import AudioClip
-from moviepy.editor import concatenate_videoclips,concatenate_audioclips,TextClip,CompositeVideoClip
-from moviepy.video.fx.accel_decel import accel_decel
-from moviepy.video.fx.blackwhite import blackwhite
-from moviepy.video.fx.blink import blink
-from moviepy.video.fx.colorx import colorx
-from moviepy.video.fx.crop import crop
-from moviepy.video.fx.even_size import even_size
-from moviepy.video.fx.fadein import fadein
-from moviepy.video.fx.fadeout import fadeout
-from moviepy.video.fx.freeze import freeze
-from moviepy.video.fx.freeze_region import freeze_region
-from moviepy.video.fx.gamma_corr import gamma_corr
-from moviepy.video.fx.headblur import headblur
-from moviepy.video.fx.invert_colors import invert_colors
-from moviepy.video.fx.loop import loop
-from moviepy.video.fx.lum_contrast import lum_contrast
-from moviepy.video.fx.make_loopable import make_loopable
-from moviepy.video.fx.margin import margin
-from moviepy.video.fx.mask_and import mask_and
-from moviepy.video.fx.mask_color import mask_color
-from moviepy.video.fx.mask_or import mask_or
-from moviepy.video.fx.mirror_x import mirror_x
-from moviepy.video.fx.mirror_y import mirror_y
-from moviepy.video.fx.painting import painting
-from moviepy.video.fx.resize import resize
-from moviepy.video.fx.rotate import rotate
-from moviepy.video.fx.scroll import scroll
-from moviepy.video.fx.speedx import speedx
-from moviepy.video.fx.supersample import supersample
-from moviepy.video.fx.time_mirror import time_mirror
-from moviepy.video.fx.time_symmetrize import time_symmetrize
+#for listening to playback shortcuts on different thread
+import threading
+import pythoncom, pyWinhook
 
-from moviepy.audio.fx.audio_fadein import audio_fadein
-from moviepy.audio.fx.audio_fadeout import audio_fadeout
-from moviepy.audio.fx.audio_left_right import audio_left_right
-from moviepy.audio.fx.audio_loop import audio_loop
-from moviepy.audio.fx.audio_normalize import audio_normalize
-from moviepy.audio.fx.volumex import volumex
+#for sleeping
+import time
 
 #creating main window object
 gui=Tk()
@@ -152,12 +127,43 @@ def pl():
                         break                    
     del kk
 
+            
+# this variable tells weather the user has paused song by pressing 5 
+# this is listened by OnKeyboardEvent()
+p5=False
+
+# see if p5 is True. if it is, stop anything playing and wait till it gets false. if it is false, continue playing
+def play(typ,track):
+        global p5
+        if p5:
+            while True:
+                if p5==False:
+                    break
+                time.sleep(1)
+        if typ==1:
+            player = MediaPlayer(track)
+            while True:
+                if p5:
+                    break
+                audio_frame, val = player.get_frame()
+                if val == 'eof':
+                    break
+                audio_frame, val = player.get_frame()
+                if val != 'eof' and audio_frame is not None:
+                    if p5:
+                        break
+                    img, t = audio_frame
+        else:
+            mixer.music.load(track)
+            mixer.music.play()
+            while mixer.music.get_busy():
+                time.sleep(1)
+            
 #main stuff happens here
 def ted():
     err_count=0
     global shuffle
     global songtracks
-    
     #add first 20 songs tothe playlist
     pl()
     
@@ -176,8 +182,16 @@ def ted():
                     gui.destroy()
                     sys.exit()                        
             shuffle.append(track)
-            audioclip = AudioFileClip(track)
-            audioclip.preview()
+            
+            #check if its video or audio file to decide weather ffpyplayer or pygame should run it 
+            videofiles=['mp4', 'mpeg', 'avi', 'mov']
+            audiofiles=['mp3','wav','ogg']
+            
+            if track.split(".")[-1] in videofiles:
+                play(1,track)
+            else:
+                play(0,track)
+            
             songtracks.pop(0)
             #once the playlist almost gets empty, add more 20 songs to playlist
             if len(songtracks)<=2:
@@ -192,10 +206,31 @@ def ted():
                 sys.exit()
             err_count += 1 
 
-def hide_window():
+#handling keypress events and when num5 is pressed, alter the value of p5 variable. stop playing song if playing
+def OnKeyboardEvent(event):
+    global p5
+    if event.Key=='Numpad5':
+        if mixer.music.get_busy():
+            mixer.music.stop()
+        if p5:
+            p5=False
+        else:
+            p5=True
+    return True
+
+#listening to key press 
+def shortcut():
+    hm = pyWinhook.HookManager()
+    hm.KeyDown = OnKeyboardEvent
+    hm.HookKeyboard()
+    pythoncom.PumpMessages()
+
+#start everything 
+def start():
    gui.withdraw()
+   threading.Thread(target=shortcut).start()
    ted()
 
-hide_window()
+start()
 
 gui.mainloop()
