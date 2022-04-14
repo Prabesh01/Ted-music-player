@@ -1,5 +1,7 @@
 pyinstaller
-moviepy
+ffpyplayer
+pygame
 psutil
-pystray
+pywin32
+pyWinhook
 tk
