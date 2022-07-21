@@ -127,6 +127,7 @@ def pl():
                         break                    
     del kk
 
+ff_opts = {'vn': True, 'sn': True}  # ffmpeg audio only option
             
 # this variable tells weather the user has paused song by pressing 5 
 # this is listened by OnKeyboardEvent()
@@ -141,18 +142,17 @@ def play(typ,track):
                     break
                 time.sleep(1)
         if typ==1:
-            player = MediaPlayer(track)
-            while True:
+            player = MediaPlayer(track,ff_opts=ff_opts)
+            val=''
+            while val != 'eof':
                 if p5:
-                    break
-                audio_frame, val = player.get_frame()
-                if val == 'eof':
                     break
                 audio_frame, val = player.get_frame()
                 if val != 'eof' and audio_frame is not None:
                     if p5:
                         break
                     img, t = audio_frame
+            player.close_player()
         else:
             mixer.music.load(track)
             mixer.music.play()
