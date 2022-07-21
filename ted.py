@@ -243,7 +243,6 @@ def ted():
             
             # handling loop and prev
             
-            songs_count=len(songtracks)
             if not loop and not prev:
                 songtracks.pop(0)
 
@@ -252,7 +251,7 @@ def ted():
                 prev=False
                 
             #once the playlist almost gets empty, add more 20 songs to playlist
-            if songs_count<=2:
+            if len(songtracks)<=2:
                 pl()
             err_count=0
         except Exception as e:
