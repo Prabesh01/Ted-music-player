@@ -3,16 +3,23 @@ Lightweight silent music player
 
 ![taskmanger.png](https://raw.githubusercontent.com/Prabesh01/ted-music-player/main/taskmanager.PNG)
 
-How about this? Just double click once and you are done for ever. It will play musics in background. No player window pops up, just music and you. 
+How about this? Just double click once and you are done for forever. It will play music in the background. No player window pops up, ever. Just music and you. 
 
 If you are one of those people who starts playing songs whenever they start their pc and carry on their work, Ted is just perfect for you.
 
 ## Usage
 - Visit the [Release page](https://github.com/Prabesh01/ted-music-player/releases) and download suitable exe file from latest release
 - After its downloaded, double click and hopefully you are done. 
-- Use Numpad 5 key to stop/play.
+- Controls:
+	**Make sure CAPS LOCK is on**
+	- Numpad 5 --> Play/Pause
+	- Numpad 4 --> Play Previous Song
+	- Numpad 6 --> Next Song
+	- Numpad 8 --> Volume Up
+	- Numpad 2 --> Volume Down
+	- Numpad 0 --> Toogle Loop	
 
-_It will play musics you've got in your Music Folder (usually C:\Users\<username>\Music). It will keep playing silently in background without showing any gui to irritate you. It will autostart everytime you turn on your pc._
+_It will play music you've got in your Music Folder (usually C:\Users\<username>\Music). It will keep playing silently in background without showing any gui to irritate you. It will autostart everytime you turn on your pc._
 
 ## Building yourself
 - `git clone https://github.com/Prabesh01/ted-music-player.git`
