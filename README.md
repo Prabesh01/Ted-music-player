@@ -9,7 +9,7 @@ If you are one of those people who starts playing songs whenever they start thei
 
 ## Usage
 - Visit the [Release page](https://github.com/Prabesh01/ted-music-player/releases) and download suitable exe file from latest release
-- After its downloaded, double click and hopefully you are done. 
+- After its downloaded, double click the exe file and hopefully you are done.
 - Controls:
 	**Make sure CAPS LOCK is on**
 	- Numpad 5 --> Play/Pause
